@@ -10,6 +10,7 @@ var mime = require('mime');
 var bodyParser = require('body-parser');
 var socketio = require('socket.io');
 
+
 // templating boilerplate setup
 app.set('views', path.join(__dirname, '/views')); // where to find the views
 app.set('view engine', 'html'); // what file extension do our templates have

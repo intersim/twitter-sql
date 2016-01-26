@@ -2,6 +2,9 @@
 var express = require('express');
 var router = express.Router();
 var tweetBank = require('../tweetBank');
+var indexModel = require('../models');
+var User = indexModel.User;
+var Tweet = indexModel.Tweet;
 
 module.exports = function makeRouterWithSockets (io) {
 
@@ -21,12 +24,15 @@ module.exports = function makeRouterWithSockets (io) {
 
   // single-user page
   router.get('/users/:username', function(req, res, next){
-    var tweetsForName = tweetBank.find({ name: req.params.username });
-    res.render('index', {
-      title: 'Twitter.js',
-      tweets: tweetsForName,
-      showForm: true,
-      username: req.params.username
+    User.findOne({where: { name: req.params.username }})
+    .then(function (user) {
+      console.log("in the user promise .then");
+      res.render('index', {
+        title: 'Twitter.js',
+        tweets: 'example tweet',
+        showForm: true,
+        username: User.name
+      });
     });
   });
 

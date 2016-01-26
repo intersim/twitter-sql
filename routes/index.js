@@ -10,12 +10,16 @@ module.exports = function makeRouterWithSockets (io) {
 
   // a reusable function
   function respondWithAllTweets (req, res, next){
-    var allTheTweets = tweetBank.list();
-    res.render('index', {
+    Tweet.findOne()
+    .then(function(allTweets) {
+      console.log("This is the allTweets: ", allTweets);
+      res.render('index', {
       title: 'Twitter.js',
-      tweets: allTheTweets,
+      tweets: allTweets,
+      username: allTweets,
       showForm: true
-    });
+    })
+  });
   }
 
   // here we basically treet the root view and tweets view as identical
@@ -24,15 +28,20 @@ module.exports = function makeRouterWithSockets (io) {
 
   // single-user page
   router.get('/users/:username', function(req, res, next){
-    User.findOne({where: { name: req.params.username }})
-    .then(function (user) {
-      console.log("in the user promise .then");
+    Tweet.findAll({ 
+      include: [{
+        model: User,
+        where: { name: req.params.username } 
+        }]
+  })
+    .then(function (data) {      
       res.render('index', {
         title: 'Twitter.js',
-        tweets: 'example tweet',
+        tweets: data,
         showForm: true,
-        username: User.name
-      });
+        username: data[0].User.name,
+        pictureUrl: data[0].User.pictureUrl
+      })
     });
   });
 
